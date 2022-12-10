@@ -1,0 +1,42 @@
+* {
+  font-family: sans-serif;
+}
+
+.pagination .active {
+  background-color: #ccc;
+}
+
+.pagination {
+  list-style-type: none;
+  display: flex;
+}
+
+.pagination button {
+  padding: 5px 20px;
+  margin-right: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  box-shadow: 1px 1px 1px #ccc;
+}
+
+td {
+  padding: 5px 40px;
+}
+
+.card {
+  border: 1px solid #000;
+  margin-bottom: 10px;
+  padding: 5px 40px;
+}
+
+.card > div:first-child {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.card > div:last-child {
+  font-size: 15px;
+}
