@@ -3,7 +3,7 @@ import {RepositorySearch} from './components/RepositorySearch';
 import {RepositoryCard} from './components/RepositoryCard';
 
 export const App = () => {
-  let element = useRoutes([
+  const element = useRoutes([
     {path: '/', element: <RepositorySearch />},
     {path: 'details/:id', element: <RepositoryCard />},
   ]);

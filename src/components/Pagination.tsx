@@ -1,4 +1,10 @@
-export const Pagination = ({currentPage, updateCurrentPage}) => {
+export const Pagination = ({
+  currentPage,
+  updateCurrentPage,
+}: {
+  currentPage: string;
+  updateCurrentPage: (page: string) => void;
+}) => {
   const PAGINATOR_SIZE = 10;
 
   return (
