@@ -9,6 +9,7 @@ import {createRepositoryQueryParams} from '../shared/mappers/create-repository-q
 import {createRepositoryInfo} from '../shared/mappers/create-repository-info.js';
 import {useDebounce} from '../shared/hooks/useDebounce.js';
 import {useLocalStorage} from '../shared/hooks/useLocalStorage.js';
+import {LocalStorageKey} from '../shared/enums/localStorageKey.js';
 
 const viewOptionsInitialState: ViewOptions = {
   searchValue: '',
@@ -18,7 +19,9 @@ const viewOptionsInitialState: ViewOptions = {
 export const RepositorySearch = () => {
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
   const [paramsState, setParamsState] = useState<ViewOptions | null>(null);
-  const [paramsLocalStorage, setParamsLocalStorage] = useLocalStorage<ViewOptions>('paramsState');
+  const [paramsLocalStorage, setParamsLocalStorage] = useLocalStorage<ViewOptions>(
+    LocalStorageKey.ViewOptions
+  );
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
