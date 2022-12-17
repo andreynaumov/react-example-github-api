@@ -8,19 +8,21 @@ import {RepositoryInfo} from '../shared/types/repository-info.js';
 import {createRepositoryQueryParams} from '../shared/mappers/create-repository-query-params.js';
 import {createRepositoryInfo} from '../shared/mappers/create-repository-info.js';
 import {useDebounce} from '../shared/hooks/useDebounce.js';
+import {useLocalStorage} from '../shared/hooks/useLocalStorage.js';
+
+const viewOptionsInitialState = () => ({
+  searchValue: '',
+  currentPage: '1',
+});
 
 export const RepositorySearch = () => {
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
   const [paramsState, setParamsState] = useState<ViewOptions | null>(null);
+  const [paramsLocalStorage, setParamsLocalStorage] = useLocalStorage<ViewOptions>('paramsState');
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    const paramsFromLocaleStorage = JSON.parse(localStorage.getItem('paramsState') ?? '');
-
-    setParamsState({
-      searchValue: paramsFromLocaleStorage?.searchValue ?? '',
-      currentPage: paramsFromLocaleStorage?.currentPage ?? '1',
-    });
+    setParamsState(paramsLocalStorage ?? viewOptionsInitialState());
   }, []);
 
   useEffect(() => {
@@ -28,13 +30,9 @@ export const RepositorySearch = () => {
       return;
     }
 
-    updateLocalStorage(paramsState);
+    setParamsLocalStorage(paramsState);
     fetchRepos(paramsState);
   }, [paramsState]);
-
-  const updateLocalStorage = ({searchValue, currentPage}: ViewOptions) => {
-    localStorage.setItem('paramsState', JSON.stringify({searchValue, currentPage}));
-  };
 
   const fetchRepos = async ({searchValue, currentPage}: ViewOptions) => {
     setIsFetching(true);
