@@ -40,17 +40,7 @@ export const RepositorySearch = () => {
       })
     );
 
-    if (paramsState.isDebounce) {
-      if (timeoutRef) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
-        fetchRepos(paramsState);
-      }, 2000);
-    } else {
-      fetchRepos(paramsState);
-    }
+    fetchRepos(paramsState);
   }, [paramsState]);
 
   const fetchRepos = async ({searchValue, currentPage}: ViewOptions) => {
@@ -64,11 +54,19 @@ export const RepositorySearch = () => {
   };
 
   const updateSearchValue = (searchValue: string) => {
-    setParamsState({
-      searchValue: searchValue.trim(),
-      currentPage: '1',
-      isDebounce: true,
-    });
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+
+    timeoutRef.current = setTimeout(
+      () =>
+        setParamsState({
+          searchValue: searchValue.trim(),
+          currentPage: '1',
+          isDebounce: false,
+        }),
+      1000
+    );
   };
 
   const updateCurrentPage = (currentPage: string) => {
