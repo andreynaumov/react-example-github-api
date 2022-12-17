@@ -10,10 +10,10 @@ import {createRepositoryInfo} from '../shared/mappers/create-repository-info.js'
 import {useDebounce} from '../shared/hooks/useDebounce.js';
 import {useLocalStorage} from '../shared/hooks/useLocalStorage.js';
 
-const viewOptionsInitialState = () => ({
+const viewOptionsInitialState: ViewOptions = {
   searchValue: '',
   currentPage: '1',
-});
+};
 
 export const RepositorySearch = () => {
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
@@ -22,7 +22,7 @@ export const RepositorySearch = () => {
   const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
-    setParamsState(paramsLocalStorage ?? viewOptionsInitialState());
+    setParamsState(paramsLocalStorage ?? viewOptionsInitialState);
   }, []);
 
   useEffect(() => {
@@ -44,26 +44,31 @@ export const RepositorySearch = () => {
     setIsFetching(false);
   };
 
-  const updateParamsStateWithDelay = useDebounce(
-    (searchValue: string) => setParamsState({searchValue: searchValue.trim(), currentPage: '1'}),
-    1000
-  );
+  const updateParamsStateWithDelay = useDebounce((searchValue: string) => {
+    setParamsState({
+      searchValue: searchValue.trim(),
+      currentPage: viewOptionsInitialState.currentPage,
+    });
+  }, 1000);
 
   const handlePageChange = (currentPage: string) => {
-    setParamsState(params => ({searchValue: params?.searchValue.trim() ?? '', currentPage}));
+    setParamsState(params => ({
+      searchValue: params?.searchValue.trim() ?? viewOptionsInitialState.searchValue,
+      currentPage,
+    }));
   };
 
   return (
     <>
       <SearchInput
-        searchValue={paramsState?.searchValue ?? ''}
+        searchValue={paramsState?.searchValue ?? viewOptionsInitialState.searchValue}
         onSearch={v => updateParamsStateWithDelay(v)}
       />
 
       <RepositoryList repositories={repositories} isLoading={isFetching} />
 
       <Pagination
-        currentPage={paramsState?.currentPage ?? ''}
+        currentPage={paramsState?.currentPage ?? viewOptionsInitialState.currentPage}
         updateCurrentPage={handlePageChange}
       />
     </>
