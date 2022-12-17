@@ -50,7 +50,7 @@ export const RepositorySearch = () => {
     setIsFetching(false);
   };
 
-  const updateSearchValue = (searchValue: string) => {
+  const handleSearchChange = (searchValue: string) => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
@@ -66,7 +66,7 @@ export const RepositorySearch = () => {
     );
   };
 
-  const updateCurrentPage = (currentPage: string) => {
+  const handlePageChange = (currentPage: string) => {
     setParamsState(params => ({
       searchValue: params?.searchValue.trim() ?? '',
       currentPage,
@@ -76,13 +76,13 @@ export const RepositorySearch = () => {
 
   return (
     <>
-      <SearchInput searchValue={paramsState?.searchValue ?? ''} onSearch={updateSearchValue} />
+      <SearchInput searchValue={paramsState?.searchValue ?? ''} onSearch={handleSearchChange} />
 
       <RepositoryList repositories={repositories} isLoading={isFetching} />
 
       <Pagination
         currentPage={paramsState?.currentPage ?? ''}
-        updateCurrentPage={updateCurrentPage}
+        updateCurrentPage={handlePageChange}
       />
     </>
   );
