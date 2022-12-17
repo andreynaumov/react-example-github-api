@@ -32,16 +32,13 @@ export const RepositorySearch = () => {
       return;
     }
 
-    localStorage.setItem(
-      'paramsState',
-      JSON.stringify({
-        searchValue: paramsState.searchValue,
-        currentPage: paramsState.currentPage,
-      })
-    );
-
+    updateLocalStorage(paramsState);
     fetchRepos(paramsState);
   }, [paramsState]);
+
+  const updateLocalStorage = ({searchValue, currentPage}: ViewOptions) => {
+    localStorage.setItem('paramsState', JSON.stringify({searchValue, currentPage}));
+  };
 
   const fetchRepos = async ({searchValue, currentPage}: ViewOptions) => {
     setIsFetching(true);
