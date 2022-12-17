@@ -10,9 +10,7 @@ import {createRepositoryInfo} from '../shared/mappers/create-repository-info.js'
 
 export const RepositorySearch = () => {
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
-  const [paramsState, setParamsState] = useState<(ViewOptions & {isDebounce: boolean}) | null>(
-    null
-  );
+  const [paramsState, setParamsState] = useState<ViewOptions | null>(null);
   const [isFetching, setIsFetching] = useState(false);
 
   const timeoutRef = useRef<number | undefined>(undefined);
@@ -23,7 +21,6 @@ export const RepositorySearch = () => {
     setParamsState({
       searchValue: paramsFromLocaleStorage?.searchValue ?? '',
       currentPage: paramsFromLocaleStorage?.currentPage ?? '1',
-      isDebounce: false,
     });
   }, []);
 
@@ -56,22 +53,13 @@ export const RepositorySearch = () => {
     }
 
     timeoutRef.current = setTimeout(
-      () =>
-        setParamsState({
-          searchValue: searchValue.trim(),
-          currentPage: '1',
-          isDebounce: false,
-        }),
+      () => setParamsState({searchValue: searchValue.trim(), currentPage: '1'}),
       1000
     );
   };
 
   const handlePageChange = (currentPage: string) => {
-    setParamsState(params => ({
-      searchValue: params?.searchValue.trim() ?? '',
-      currentPage,
-      isDebounce: false,
-    }));
+    setParamsState(params => ({searchValue: params?.searchValue.trim() ?? '', currentPage}));
   };
 
   return (
