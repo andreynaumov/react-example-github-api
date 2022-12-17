@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {RepositoryList} from './RepositoryList.jsx';
 import {SearchInput} from './SearchInput.jsx';
 import {Pagination} from './Pagination.jsx';
@@ -7,13 +7,12 @@ import {ViewOptions} from '../shared/types/view-options.js';
 import {RepositoryInfo} from '../shared/types/repository-info.js';
 import {createRepositoryQueryParams} from '../shared/mappers/create-repository-query-params.js';
 import {createRepositoryInfo} from '../shared/mappers/create-repository-info.js';
+import {useDebounce} from '../shared/hooks/useDebounce.js';
 
 export const RepositorySearch = () => {
   const [repositories, setRepositories] = useState<RepositoryInfo[]>([]);
   const [paramsState, setParamsState] = useState<ViewOptions | null>(null);
   const [isFetching, setIsFetching] = useState(false);
-
-  const timeoutRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const paramsFromLocaleStorage = JSON.parse(localStorage.getItem('paramsState') ?? '');
@@ -47,16 +46,10 @@ export const RepositorySearch = () => {
     setIsFetching(false);
   };
 
-  const handleSearchChange = (searchValue: string) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-
-    timeoutRef.current = setTimeout(
-      () => setParamsState({searchValue: searchValue.trim(), currentPage: '1'}),
-      1000
-    );
-  };
+  const updateParamsStateWithDelay = useDebounce(
+    (searchValue: string) => setParamsState({searchValue: searchValue.trim(), currentPage: '1'}),
+    1000
+  );
 
   const handlePageChange = (currentPage: string) => {
     setParamsState(params => ({searchValue: params?.searchValue.trim() ?? '', currentPage}));
@@ -64,7 +57,10 @@ export const RepositorySearch = () => {
 
   return (
     <>
-      <SearchInput searchValue={paramsState?.searchValue ?? ''} onSearch={handleSearchChange} />
+      <SearchInput
+        searchValue={paramsState?.searchValue ?? ''}
+        onSearch={v => updateParamsStateWithDelay(v)}
+      />
 
       <RepositoryList repositories={repositories} isLoading={isFetching} />
 
